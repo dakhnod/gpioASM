@@ -1,3 +1,0 @@
-label   start  
-write_digital 100 0x x 01
-jump_match 0, 1 x0 0x0

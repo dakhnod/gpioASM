@@ -1,0 +1,30 @@
+label first
+write_analog_channel_0 600
+sleep_ms 300
+sleep_match_any 11
+jump_match_all first 01
+
+label second
+write_analog_channel_0 1050
+sleep_ms 300
+sleep_match_any 11
+jump_match_all first 01
+
+label third
+write_analog_channel_0 1500
+sleep_ms 300
+sleep_match_any 11
+jump_match_all second 01
+
+label fourth
+write_analog_channel_0 1950
+sleep_ms 300
+sleep_match_any 11
+jump_match_all third 01
+
+label fifth
+write_analog_channel_0 2400
+sleep_ms 300
+sleep_match_any 11
+jump_match_all fourth 01
+jump fifth

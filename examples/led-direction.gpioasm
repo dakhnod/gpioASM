@@ -1,0 +1,34 @@
+label start
+
+write_digital 00000
+sleep_match_all 00
+sleep_ms 200
+sleep_match_any 11
+jump_match_all down 01
+
+write_digital 10000
+sleep_ms 50
+write_digital 01000
+sleep_ms 50
+write_digital 00100
+sleep_ms 50
+write_digital 00010
+sleep_ms 50
+write_digital 00001
+sleep_ms 50
+
+jump start
+
+label down
+write_digital 00001
+sleep_ms 50
+write_digital 00010
+sleep_ms 50
+write_digital 00100
+sleep_ms 50
+write_digital 01000
+sleep_ms 50
+write_digital 10000
+sleep_ms 50
+
+jump start

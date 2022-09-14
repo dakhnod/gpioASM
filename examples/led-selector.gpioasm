@@ -1,0 +1,30 @@
+label first
+write_digital 10000
+sleep_ms 300
+sleep_match_any 11
+jump_match_all first 01
+
+label second
+write_digital 01000
+sleep_ms 300
+sleep_match_any 11
+jump_match_all first 01
+
+label third
+write_digital 00100
+sleep_ms 300
+sleep_match_any 11
+jump_match_all second 01
+
+label fourth
+write_digital 00010
+sleep_ms 300
+sleep_match_any 11
+jump_match_all third 01
+
+label fifth
+write_digital 00001
+sleep_ms 300
+sleep_match_any 11
+jump_match_all fourth 01
+jump fifth

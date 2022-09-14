@@ -1,0 +1,22 @@
+label wait
+write_digital 00100
+sleep_ms 100
+sleep_match_any 11
+jump_match_all down 10
+
+write_digital 01000
+sleep_ms 100
+write_digital 10000
+sleep_ms 100
+write_digital 01000
+sleep_ms 100
+jump wait
+
+label down
+write_digital 00010
+sleep_ms 100
+write_digital 00001
+sleep_ms 100
+write_digital 00010
+sleep_ms 100
+jump wait

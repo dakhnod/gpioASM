@@ -5,4 +5,4 @@ sleep_ms 500
 write_digital 00000
 sleep_ms 500
 
-jump start
+jump_count start 5

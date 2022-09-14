@@ -1,0 +1,30 @@
+label start
+
+sleep_match_any 11
+
+label wait
+write_digital 11111
+
+sleep_match_all 00
+
+sleep_match_any_timeout 11 1000
+jump_match_any wait 11
+write_digital 0----
+
+sleep_match_any_timeout 11 1000
+jump_match_any wait 11
+write_digital -0---
+
+sleep_match_any_timeout 11 1000
+jump_match_any wait 11
+write_digital --0--
+
+sleep_match_any_timeout 11 1000
+jump_match_any wait 11
+write_digital ---0-
+
+sleep_match_any_timeout 11 1000
+jump_match_any wait 11
+write_digital ----0
+
+jump start

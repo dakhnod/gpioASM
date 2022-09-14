@@ -1,0 +1,14 @@
+label start
+
+write_digital 00000
+
+sleep_match_any 11
+write_digital 11111
+
+label wait
+
+sleep_match_all 00
+sleep_match_any_timeout 11 5000
+jump_match_any wait 11
+
+jump start

@@ -1,8 +1,8 @@
 label start
 
 write_digital 11111
-sleep_ms 500
+sleep_ms 100
 write_digital 00000
-sleep_ms 500
+sleep_ms 100
 
-jump start
+jump_match_all start 00
