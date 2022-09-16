@@ -1,30 +1,35 @@
 label first
+write_digital 00001
 write_analog_channel_0 600
 sleep_ms 300
 sleep_match_any 11
-jump_match_all first 01
+jump_match_all first 10
 
 label second
+write_digital 00010
 write_analog_channel_0 1050
 sleep_ms 300
 sleep_match_any 11
-jump_match_all first 01
+jump_match_all first 10
 
 label third
+write_digital 00100
 write_analog_channel_0 1500
 sleep_ms 300
 sleep_match_any 11
-jump_match_all second 01
+jump_match_all second 10
 
 label fourth
+write_digital 01000
 write_analog_channel_0 1950
 sleep_ms 300
 sleep_match_any 11
-jump_match_all third 01
+jump_match_all third 10
 
 label fifth
+write_digital 10000
 write_analog_channel_0 2400
 sleep_ms 300
 sleep_match_any 11
-jump_match_all fourth 01
+jump_match_all fourth 10
 jump fifth

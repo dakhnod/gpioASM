@@ -1,24 +1,26 @@
-# GPIO instructions (gpioASM)
+# GPIO opcodes (gpioASM)
 
 Binary executables can be compiled from gpioASM for tasks like `power a motor until an endstop is reached`, `toggle an LED with a button press`, `turn a stepper motor until a hall sensor is triggered` and many more.
 
 Here are the available instructions:
 
-| command | arguments | meaning |
-| ------- | --------- | ------- |
-| `0b00000000` | [digital bits](#digital-bits) | [write digital outputs](#write-digital-output) |
-| `0b00010000` | uint16_t | [write first analog channel](#write-analog-outputs) |
-| `0b00010001` | uint16_t | [write second analog channel](#write-analog-outputs) |
-| `0b00010010` | uint16_t | [write third analog channel](#write-analog-outputs) |
-| `0b00010011` | uint16_t | [write fourth analog channel](#write-analog-outputs) |
-| `0b00100000` | [varint](#varint) | [sleep for n milliseconds](#sleep-for-n-milliseconds) |
-| `0b00100001` | [digital bits](#digital-bits) | [sleep until all inputs match](#sleep-until-all-inputs-match) |
-| `0b00100010` | [digital bits](#digital-bits) | [sleep until any inputs match](#sleep-until-any-inputs-match) |
-| `0b01000000` | [varint](#varint) | [jump to code location](#jump-to-code-location) |
-| `0b01000001` | [varint](#varint), [digital bits](#digital-bits) | [jump to location if all pins match](#jump-to-location-if-all-pins-match) |
-| `0b01000010` | [varint](#varint), [digital bits](#digital-bits) | [jump to location if any pins match](#jump-to-location-if-any-pins-match) |
-| `0b01001000` | [varint](#varint), [varint](#varint) | [perform jump max. n times](#perform-jump-max-n-times)
-| `0b10000000` | | [stop script execution](#stop-script-execution)
+| command | opcode | arguments |
+| ------- | ------- | --------- |
+| [`write_digital`](GPIO_ASM.md#write-digitals) | `0b00000000` | [digital bits](#digital-bits) |
+| [`write_analog_channel_0`](GPIO_ASM.md#write-analog-channel) | `0b00010000` | [uint16_t](#uint16t) |
+| [`write_analog_channel_1`](GPIO_ASM.md#write-analog-channel) | `0b00010001` | [uint16_t](#uint16t) |
+| [`write_analog_channel_2`](GPIO_ASM.md#write-analog-channel) | `0b00010010` | [uint16_t](#uint16t) |
+| [`write_analog_channel_3`](GPIO_ASM.md#write-analog-channel) | `0b00010011` | [uint16_t](#uint16t) |
+| [`sleep_ms`](GPIO_ASM.md#sleeping-for-constant-time) | `0b00100000` | [varint](#varint) |
+| [`sleep_match_all`](GPIO_ASM.md#await-pin-states) | `0b00100001` | [digital bits](#digital-bits) |
+| [`sleep_match_any`](GPIO_ASM.md#await-at-least-one-pin-state) | `0b00100010` | [digital bits](#digital-bits) |
+| [`sleep_match_all_timeout`](GPIO_ASM.md#await-with-timeout) | `0b00100100` | [digital bits](#digital-bits) |
+| [`sleep_match_any_timeout`](GPIO_ASM.md#await-with-timeout) | `0b00100101` | [digital bits](#digital-bits) |
+| [`jump`](GPIO_ASM.md#jumping) | `0b01000000` | [varint](#varint) |
+| [`jump_match_all`](GPIO_ASM.md#jumping-conditionally) | `0b01000001` | [varint](#varint), [digital bits](#digital-bits) |
+| [`jump_match_any`](GPIO_ASM.md#jumping-conditionally) | `0b01000010` | [varint](#varint), [digital bits](#digital-bits) |
+| [`jump_count`](GPIO_ASM.md#jumping-n-times) | `0b01001000` | [varint](#varint), [varint](#varint) |
+| [`exit`](GPIO_ASM.md#terminating-code-execution) | `0b10000000` | |
 
 ## Datatypes
 
@@ -48,117 +50,28 @@ If the chip boots with 6 digital output pins configured, it always expects a dig
 Varints are encoded integers that grow bytewise in size with higher integer values.
 Best described [here](https://developers.google.com/protocol-buffers/docs/encoding).
 
-## Commands
+### uint16_t
 
+unsigned integers, range from 0 - 65535, encoded as 16-bit little-endian.
 
-### Write digital output
+## Code structure
 
-This instructions reads in the following bytes and writes the encoded pin states to the configured digital outputs. The amount of expected bytes depends on the digital output pin count, as described [here](#digital-bits).
+Every command is encoded as its opcode and the arguments.
+No length or padding is encoded along.
 
-Example:
+`write_digital 1001` becomes `0b00000000 01000001`.
+`write_analog_channel_1 1000` becomes `0b00000000 00000011 11101000`.
 
-`0b00000000 11000111`
-
-Writes LOW to the second output pin and HIGH to the third.
-The first output pin remains untouched since the bits are set to `0b11`.
-
-### Write analog output(s)
-
-This instruction reads in the next two bytes and parses them as an unsigned 16-bit little-endian encoded integer.
-It uses this value as microseconds to output as an anlog channels duty cycle.
-
-Example:
-
-`0b00010000 11011100 00000101`
-
-outputs a duty cycle of 1500us on analog channel 0.
-
-`0b00010010 11101000 00000011`
-
-outputs a duty cycle of 1000us on analog channel 2.
-
-### sleep for n milliseconds
-
-This instruction reads in a [varint](#varint) and uses its value in milliseconds to sleep.
-Script execution continues after the sleep is over.
-
-Example:
-
-`0b00100000 01100100`
-
-delays script execution for 100ms.
-
-
-### sleep until all inputs match
-
-This instruction takes in [digital bits](#digital-bits) and waits until all the input pins match the given states.
-It can be used to wait for endstops, reed switches, button presses etc.
-
-Example:
-
-`0b00100001 11110001`
-
-Waits for pins #3 to become LOW and pin #4 to become HIGH.
-Pins #1 and #2 are ignored since their bits are set to `0b11`.
-
-### sleep until any inputs match
-
-same as [sleep until all inputs match](#sleep-until-all-inputs-match), but one single matching input is enough to terminate the sleep.
-
-Example:
-
-`0b00100010 11110001`
-
-sleep terminates when either pin #3 is LOW __or__ pin #4 is high.
-Pins #1 and #2 are ignored since their bits are set to `0b11`.
-
-### jump to code location
-
-This instruction reads in a [varint](#varint) and sets the internal instruction pointer to that value, continuing code execution from there.
-
-Example:
-
-`0b01000000 00000000`
-
-jumpts to byte index 0, restarting script execution from the first instruction.
-
-### jump to location if all pins match
-
-This instruction reads in a byte index like the [simple jump](#jump-to-code-location), but also reads in [bit states](#digital-bits).
-It only performs the jump if the configured input pin states match the requested pin states.
-
-Example:
-
-`0b01000001 00000000 11110100`
-
-only jumpts to byte index 0, when pin #3 reads HIGH and pin #4 reads LOW.
-Pins #1 und #2 are ignored since their bits are set to `0b11`.
-
-### jump to location if any pins match
-
-This instruction works just like [jump if all match](#jump-to-location-if-all-pins-match), but one single amtchis sufficient to trigger the jump. Not all pins have to match.
-
-Example:
-
-`0b01000010 00000000 11110100`
-
-only jumpts to byte index 0, when pin #3 reads HIGH __or__ pin #4 reads LOW.
-Pins #1 und #2 are ignored since their bits are set to `0b11`.
-
-### perform jump max. n times
-
-This instruction reads in a [varint](#varint) jump target and a [varint](#varint) `n`, and repeats the jump only `n` number of times.
-
-The runtime knows what jump to count for as long as no other jump instruction is executed.
-As soon as any other jump instruction is executed, the runtime forgets what jump it was supposed to count for.
-
-Example:
-
-`0b01001000 00000000 01100100`
-
-jumps back to byte index 0 100 times, unless the loop is jumped out of.
-
-### stop script execution
-
-this instruction requires no arguments and simply stops the script execution.
-No further instruction is read in after this is executed.
+```
+label start
+write_digital 1
+sleep_ms 100
+write_digital 0
+sleep_ms 100
+jump start
+```
+becomes
+```
+wr.-dig.   pin#0 1  sleep    100ms    wr.-dit. pin#0 0  sleep    100ms    jump     addr 0
+0b00000000 01111111 00100000 01100100 00000000 00111111 00100000 01100100 01000000 00000000
+```
