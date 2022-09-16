@@ -5,5 +5,5 @@ Examples would be `blink an led`, `power a motor until an endstop is reached`, `
 
 TOC:
 
-1. [Instructions reference](#docs/GPIO_ASM.md)
-2. [Executable reference](#docs/INSTRUCTIONS.md)
+1. [Instructions reference](docs/GPIO_ASM.md)
+2. [Executable reference](docs/INSTRUCTIONS.md)
