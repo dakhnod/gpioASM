@@ -7,3 +7,4 @@ TOC:
 
 1. [Instructions reference](docs/GPIO_ASM.md)
 2. [Executable reference](docs/INSTRUCTIONS.md)
+3. [Examples](examples/)
