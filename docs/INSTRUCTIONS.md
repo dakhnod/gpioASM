@@ -6,21 +6,22 @@ Here are the available instructions:
 
 | command | opcode | arguments |
 | ------- | ------- | --------- |
-| [`write_digital`](GPIO_ASM.md#write-digitals) | `0b00000000` | [digital bits](#digital-bits) |
+| [`write_digital`](GPIO_ASM.md#write-digitals) | `0b0000----` | [digital bits](#digital-bits) |
 | [`write_analog_channel_0`](GPIO_ASM.md#write-analog-channel) | `0b00010000` | [uint16_t](#uint16t) |
 | [`write_analog_channel_1`](GPIO_ASM.md#write-analog-channel) | `0b00010001` | [uint16_t](#uint16t) |
 | [`write_analog_channel_2`](GPIO_ASM.md#write-analog-channel) | `0b00010010` | [uint16_t](#uint16t) |
 | [`write_analog_channel_3`](GPIO_ASM.md#write-analog-channel) | `0b00010011` | [uint16_t](#uint16t) |
 | [`sleep_ms`](GPIO_ASM.md#sleeping-for-constant-time) | `0b00100000` | [varint](#varint) |
-| [`sleep_match_all`](GPIO_ASM.md#await-pin-states) | `0b00100001` | [digital bits](#digital-bits) |
-| [`sleep_match_any`](GPIO_ASM.md#await-at-least-one-pin-state) | `0b00100010` | [digital bits](#digital-bits) |
-| [`sleep_match_all_timeout`](GPIO_ASM.md#await-with-timeout) | `0b00100100` | [digital bits](#digital-bits) |
-| [`sleep_match_any_timeout`](GPIO_ASM.md#await-with-timeout) | `0b00100101` | [digital bits](#digital-bits) |
-| [`jump`](GPIO_ASM.md#jumping) | `0b01000000` | [varint](#varint) |
-| [`jump_match_all`](GPIO_ASM.md#jumping-conditionally) | `0b01000001` | [varint](#varint), [digital bits](#digital-bits) |
-| [`jump_match_any`](GPIO_ASM.md#jumping-conditionally) | `0b01000010` | [varint](#varint), [digital bits](#digital-bits) |
-| [`jump_count`](GPIO_ASM.md#jumping-n-times) | `0b01001000` | [varint](#varint), [varint](#varint) |
-| [`exit`](GPIO_ASM.md#terminating-code-execution) | `0b10000000` | |
+| [`sleep_match_all`](GPIO_ASM.md#await-pin-states) | `0b0011----` | [digital bits](#digital-bits) |
+| [`sleep_match_any`](GPIO_ASM.md#await-at-least-one-pin-state) | `0b0100----` | [digital bits](#digital-bits) |
+| [`sleep_match_all_timeout`](GPIO_ASM.md#await-with-timeout) | `0b0101----` | [digital bits](#digital-bits) |
+| [`sleep_match_any_timeout`](GPIO_ASM.md#await-with-timeout) | `0b0110----` | [digital bits](#digital-bits) |
+| [`jump`](GPIO_ASM.md#jumping) | `0b01110000` | [varint](#varint) |
+| [`check_bytecode_version`](GPIO_ASM.md#check_bytecode_version) | `0b10000000` | [varint](#varint) |
+| [`jump_match_all`](GPIO_ASM.md#jumping-conditionally) | `0b1001----` | [varint](#varint), [digital bits](#digital-bits) |
+| [`jump_match_any`](GPIO_ASM.md#jumping-conditionally) | `0b1010----` | [varint](#varint), [digital bits](#digital-bits) |
+| [`jump_count`](GPIO_ASM.md#jumping-n-times) | `0b10110000` | [varint](#varint), [varint](#varint) |
+| [`exit`](GPIO_ASM.md#terminating-code-execution) | `0b11000000` | |
 
 ## Datatypes
 
@@ -73,5 +74,5 @@ jump start
 becomes
 ```
 wr.-dig.   pin#0 1  sleep    100ms    wr.-dit. pin#0 0  sleep    100ms    jump     addr 0
-0b00000000 01111111 00100000 01100100 00000000 00111111 00100000 01100100 01000000 00000000
+0b00000001 01111111 00100000 01100100 00000001 00111111 00100000 01100100 01000000 00000000
 ```
