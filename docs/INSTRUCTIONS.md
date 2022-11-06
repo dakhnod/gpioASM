@@ -23,6 +23,9 @@ Here are the available instructions:
 | [`jump_count`](GPIO_ASM.md#jumping-n-times) | `0b10110000` | [varint](#varint), [varint](#varint) |
 | [`exit`](GPIO_ASM.md#terminating-code-execution) | `0b11000000` | |
 
+If an opcode contains dashes (----), those bits are filled with the size of the argument in bytes.
+`write_digital 01010` for example contains 5 pins, and since 2 bits are needed for each pin, this argument requires 2 bytes. The resulting opcode will be `0b00000010`.
+
 ## Datatypes
 
 ### digital bits
